@@ -61,7 +61,7 @@ class Controller {
 	}
 
 	public function manageUser($parameters) { 
-		$fields_array = array('user_id', 'user_rights_access');
+		$fields_array = array('user_id', 'user_access_rights');
 		if(self::validateInputs($parameters, $fields_array) !== TRUE) {
 			return self::validateInputs($parameters, $fields_array); 
 		}
