@@ -1,6 +1,6 @@
 <?php
 
-include_once("API_Request.php");
+include_once("Controller.php");
 include_once("Utilities.php");
 
 header("Access-Control-Allow-Origin: *");
@@ -18,43 +18,53 @@ if($_SERVER['REQUEST_METHOD'] == "POST") {
 	$parameters = $_GET;
 }
 
-if(isset($uri[1])) {
-	switch($uri[1]) {
-		case "login" :
-			//"PHP_AUTH_USER":"emma.rus93@gmail.com","PHP_AUTH_PW":"aaa"
-			$parameters['username'] = $_SERVER['PHP_AUTH_USER'];
-			$parameters['password'] = $_SERVER['PHP_AUTH_PW'];
-			$result = API_Request::login($parameters);
-			break;
-		case "validate_session" :
-			$result = API_Request::validateSession($parameters);
-			break;
-		case "edit_user" :
-			$result = API_Request::editUser($parameters);
-			break;
-		case "get_users":
-			$result = API_Request::getUsers();
-			break;
-		case "manage_user":
-			$result = API_Request::manageUser($parameters);
-			break;
-		case "get":
-			$result = API_Request::getData($parameters);
-			break;
-		case "add_user":
-			$result = API_Request::addUser($parameters);
-			break;
-		case "add_app":
-			$result = API_Request::addApp($parameters);
-			break;
-		case "add_role":
-			$result = API_Request::addRole($parameters);
-			break;
-		default:
-		 	$result = array('errors' => "Invalid API Request");
-		 	break;
+$headers = apache_request_headers();
+$auth = Controller::checkApiToken($headers);
+if($auth) {
+	if(isset($uri[1])) {
+		switch($uri[1]) {
+			case "login" :
+				$result = Controller::login($parameters);
+				break;
+			case "validate_session" :
+				$result = Controller::validateSession($parameters);
+				break;
+			case "edit_user":
+				$result = Controller::editUser($parameters);
+				break;
+			case "get_users":
+				$result = Controller::getUsers();
+				break;
+			case "manage_user":
+				$result = Controller::manageUser($parameters);
+				break;
+			case "get":
+				$result = Controller::getData($parameters);
+				break;
+			case "add_user":
+				$result = Controller::addUser($parameters);
+				break;
+			case "add_app":
+				$result = Controller::addApp($parameters);
+				break;
+			case "add_role":
+				$result = Controller::addRole($parameters);
+				break;
+			case "add_access_right":
+				$result = Controller::addAccessRight($parameters);
+				break;	
+
+			default:
+			 	$result = array('errors' => "Invalid API Request");
+			 	break;
+		}
+	} else {
+		$result = array('errors' => "Invalid API Request");
 	}
-	echo json_encode($result);
+} else {
+	$result = array("errors" => "Unauthorized request!");
 }
+
+echo json_encode($result);
 
 ?>
