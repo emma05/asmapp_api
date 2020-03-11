@@ -154,13 +154,13 @@ class Repository {
 		$user_rights = unserialize($parameters['user_access_rights']);
 		$stmt = $conn->prepare("SELECT uar.access_right_id as access_right_id FROM user_access_right uar 
 			WHERE uar.user_id=:user_id");
-		$stmt->bindParam(":user_id", $parameters['id'], PDO::PARAM_INT); 
+		$stmt->bindParam(":user_id", $parameters['user_id'], PDO::PARAM_INT); 
 		$stmt->execute();
 		$db_user_rights = $stmt->fetchAll(PDO::FETCH_COLUMN);
 		foreach($user_rights as $user_right) {
 			if(!in_array($user_right, $db_user_rights)) {
 				$stmt = $conn->prepare("INSERT INTO user_access_right(user_id, access_right_id) VALUES (:user_id, :access_right_id)");
-				$stmt->bindParam(":user_id", $parameters['id'], PDO::PARAM_INT);
+				$stmt->bindParam(":user_id", $parameters['user_id'], PDO::PARAM_INT);
 				$stmt->bindParam(":access_right_id", $user_right, PDO::PARAM_INT);
 				$stmt->execute(); 
 			} else {
