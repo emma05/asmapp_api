@@ -88,6 +88,7 @@ class Controller {
 			case "roles_app":
 				$app = true;
 				$result = Repository::getRoles($app);
+				break;
 			default:
 				$result = "";
 				break;
